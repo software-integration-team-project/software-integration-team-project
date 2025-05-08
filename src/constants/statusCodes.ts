@@ -7,11 +7,11 @@ const badRequest = 400;
 const userAlreadyExists = 409;
 
 export {
-  queryError,
-  notFound,
-  badGateway,
-  success,
-  unauthorized,
-  badRequest,
-  userAlreadyExists,
+    queryError,
+    notFound,
+    badGateway,
+    success,
+    unauthorized,
+    badRequest,
+    userAlreadyExists,
 };

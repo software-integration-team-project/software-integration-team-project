@@ -23,17 +23,17 @@ const startConnection = (): void => {
 
     db_connection.connect((err) => {
         if (!err) {
-            logger.info("PostgreSQL Connected");
+            logger.info('PostgreSQL Connected');
         } else {
-            logger.error("PostgreSQL Connection Failed");
+            logger.error('PostgreSQL Connection Failed');
         }
     });
 
-    db_connection.on("error", () => {
-        logger.error("Unexpected error on idle client");
+    db_connection.on('error', () => {
+        logger.error('Unexpected error on idle client');
         startConnection();
     });
-}
+};
 
 startConnection();
 

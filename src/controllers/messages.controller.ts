@@ -7,14 +7,17 @@ const getMessages = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json(messages);
 };
 
-const getMessageById = async (req: Request, res: Response): Promise<Response> => {
+const getMessageById = async (
+    req: Request,
+    res: Response,
+): Promise<Response> => {
     const { messageId } = req.params;
 
     try {
         const message = await messageModel.findById(messageId);
         return res.status(200).json(message);
     } catch {
-        return res.status(500).json({ error: "Error while getting message" });
+        return res.status(500).json({ error: 'Error while getting message' });
     }
 };
 
@@ -22,11 +25,11 @@ const addMessage = async (req: Request, res: Response): Promise<Response> => {
     const { message } = req.body;
 
     if (!message || !message.name) {
-        return res.status(400).json({ error: "missing information" });
+        return res.status(400).json({ error: 'missing information' });
     }
 
     if (!req.session.user) {
-        return res.status(500).json({ error: "You are not authenticated" });
+        return res.status(500).json({ error: 'You are not authenticated' });
     }
 
     message.user = req.session.user._id;
@@ -36,7 +39,7 @@ const addMessage = async (req: Request, res: Response): Promise<Response> => {
         await messageObj.save();
         return res.status(200).json(messageObj);
     } catch {
-        return res.status(500).json({ error: "Failed to add message" });
+        return res.status(500).json({ error: 'Failed to add message' });
     }
 };
 
@@ -45,7 +48,7 @@ const editMessage = async (req: Request, res: Response): Promise<Response> => {
     const { messageId } = req.params;
 
     if (!name || !messageId)
-        return res.status(400).json({ error: "missing information" });
+        return res.status(400).json({ error: 'missing information' });
     try {
         const message = await messageModel.findByIdAndUpdate(
             messageId,
@@ -54,24 +57,28 @@ const editMessage = async (req: Request, res: Response): Promise<Response> => {
             },
             {
                 new: true,
-            }
+            },
         );
         return res.status(200).json(message);
     } catch {
-        return res.status(500).json({ error: "Failed to update message" });
+        return res.status(500).json({ error: 'Failed to update message' });
     }
 };
 
-const deleteMessage = async (req: Request, res: Response): Promise<Response> => {
+const deleteMessage = async (
+    req: Request,
+    res: Response,
+): Promise<Response> => {
     const { messageId } = req.params;
 
-    if (!messageId) return res.status(400).json({ error: "missing information" });
+    if (!messageId)
+        return res.status(400).json({ error: 'missing information' });
 
     try {
         await messageModel.findByIdAndDelete(messageId);
-        return res.status(200).json({ message: "Message deleted" });
+        return res.status(200).json({ message: 'Message deleted' });
     } catch {
-        return res.status(500).json({ error: "Failed to delete message" });
+        return res.status(500).json({ error: 'Failed to delete message' });
     }
 };
 

@@ -18,7 +18,7 @@ const addComment = async (req: Request, res: Response): Promise<void> => {
         !comment ||
         !title
     ) {
-        res.status(badRequest).json({ message: "Missing parameters" });
+        res.status(badRequest).json({ message: 'Missing parameters' });
     } else {
         try {
             const commentObj = new commentModel({
@@ -31,12 +31,12 @@ const addComment = async (req: Request, res: Response): Promise<void> => {
 
             await commentObj.save();
 
-            res.status(success).json({ message: "Comment added" });
+            res.status(success).json({ message: 'Comment added' });
         } catch (error) {
             logger.error(error.stack);
-            res
-                .status(queryError)
-                .json({ error: "Exception occurred while adding comment" });
+            res.status(queryError).json({
+                error: 'Exception occurred while adding comment',
+            });
         }
     }
 };
@@ -47,16 +47,16 @@ const getCommentsById = async (req: Request, res: Response): Promise<void> => {
     const movieId = parseInt(movie_id);
 
     if (!movie_id || isNaN(movieId)) {
-        res.status(badRequest).json({ message: "movie id missing" });
+        res.status(badRequest).json({ message: 'movie id missing' });
     } else {
         try {
             const comments = await commentModel.find({ movie_id: movieId });
             res.status(success).json({ comments });
         } catch (error) {
             logger.error(error.stack);
-            res
-                .status(queryError)
-                .json({ error: "Exception occured while fetching comments" });
+            res.status(queryError).json({
+                error: 'Exception occured while fetching comments',
+            });
         }
     }
 };

@@ -8,7 +8,7 @@ const signup = async (req: Request, res: Response): Promise<Response> => {
     const { username, email, password } = req.body;
 
     if (!username || !password || !email) {
-        return res.status(400).json({ error: "missing information" });
+        return res.status(400).json({ error: 'missing information' });
     }
 
     const hash = bcrypt.hashSync(password, 10);
@@ -22,7 +22,7 @@ const signup = async (req: Request, res: Response): Promise<Response> => {
         const user = await User.save();
         return res.status(200).json(user);
     } catch {
-        return res.status(500).json({ message: "failed to save user" });
+        return res.status(500).json({ message: 'failed to save user' });
     }
 };
 
@@ -30,18 +30,20 @@ const signin = async (req: Request, res: Response): Promise<Response> => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ error: "missing information" });
+        return res.status(400).json({ error: 'missing information' });
     }
 
     try {
         const user = await userModel.findOne({ email: email });
 
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({ message: 'User not found' });
         }
 
         if (!bcrypt.compareSync(password, user.password)) {
-            return res.status(400).json({ message: "Email or password don't match" });
+            return res
+                .status(400)
+                .json({ message: "Email or password don't match" });
         }
 
         req.session.user = {
@@ -52,19 +54,19 @@ const signin = async (req: Request, res: Response): Promise<Response> => {
             { user: { id: user._id, email: user.email } },
             process.env.JWT_SECRET_KEY as string,
             {
-                expiresIn: "1h",
-            }
+                expiresIn: '1h',
+            },
         );
 
         return res.status(200).json({ token });
     } catch {
-        return res.status(500).json({ error: "Failed to get user" });
+        return res.status(500).json({ error: 'Failed to get user' });
     }
 };
 
 const getUser = async (req: Request, res: Response): Promise<Response> => {
     if (!req.session.user) {
-        return res.status(500).json({ error: "You are not authenticated" });
+        return res.status(500).json({ error: 'You are not authenticated' });
     }
 
     try {
@@ -72,15 +74,15 @@ const getUser = async (req: Request, res: Response): Promise<Response> => {
             .findById(req.session.user._id, {
                 password: 0,
             })
-            .populate("messages");
+            .populate('messages');
 
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({ message: 'User not found' });
         }
 
         return res.status(200).json(user);
     } catch {
-        return res.status(500).json({ error: "Failed to get user" });
+        return res.status(500).json({ error: 'Failed to get user' });
     }
 };
 
@@ -89,7 +91,7 @@ const logout = (req: Request, res: Response): Response => {
         delete req.session.user;
     }
 
-    return res.status(200).json({ message: "Disconnected" });
+    return res.status(200).json({ message: 'Disconnected' });
 };
 
 export default {
