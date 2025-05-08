@@ -13,7 +13,7 @@ const getMovies = async (req: Request, res: Response): Promise<Response> => {
     } else {
         try {
             const movies = await pool.query(
-                "SELECT * FROM movies GROUP BY type, movie_id;"
+                'SELECT * FROM movies GROUP BY type, movie_id;',
             );
 
             const groupedMovies = movies.rows.reduce((acc, movie) => {
@@ -28,9 +28,9 @@ const getMovies = async (req: Request, res: Response): Promise<Response> => {
             return res.status(success).json({ movies: groupedMovies });
         } catch (error) {
             logger.error(error.stack);
-            res
-                .status(queryError)
-                .json({ error: "Exception occured while fetching movies" });
+            res.status(queryError).json({
+                error: 'Exception occured while fetching movies',
+            });
         }
     }
 };
@@ -38,8 +38,8 @@ const getMovies = async (req: Request, res: Response): Promise<Response> => {
 const getMoviesByCategory = async (category: unknown): Promise<unknown> => {
     try {
         const movies = await pool.query(
-            "SELECT * FROM movies WHERE type = $1 ORDER BY release_date DESC;",
-            [category]
+            'SELECT * FROM movies WHERE type = $1 ORDER BY release_date DESC;',
+            [category],
         );
         return movies.rows;
     } catch (error) {
@@ -47,32 +47,35 @@ const getMoviesByCategory = async (category: unknown): Promise<unknown> => {
     }
 };
 
-const getTopRatedMovies = async (req: Request, res: Response): Promise<void> => {
+const getTopRatedMovies = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
     try {
         const movies = await pool.query(
-            "SELECT * FROM movies ORDER BY rating DESC LIMIT 10;"
+            'SELECT * FROM movies ORDER BY rating DESC LIMIT 10;',
         );
         res.status(success).json({ movies: movies.rows });
     } catch (error) {
         logger.error(error.stack);
-        res
-            .status(queryError)
-            .json({ error: "Exception occured while fetching top rated movies" });
+        res.status(queryError).json({
+            error: 'Exception occured while fetching top rated movies',
+        });
     }
 };
 
 const getSeenMovies = async (req: Request, res: Response): Promise<void> => {
     try {
         const movies = await pool.query(
-            "SELECT * FROM seen_movies S JOIN movies M ON S.movie_id = M.movie_id WHERE email = $1;",
-            [req.session.user.email]
+            'SELECT * FROM seen_movies S JOIN movies M ON S.movie_id = M.movie_id WHERE email = $1;',
+            [req.session.user.email],
         );
         res.status(success).json({ movies: movies.rows });
     } catch (error) {
         logger.error(error.stack);
-        res
-            .status(queryError)
-            .json({ error: "Exception occured while fetching seen movies" });
+        res.status(queryError).json({
+            error: 'Exception occured while fetching seen movies',
+        });
     }
 };
 

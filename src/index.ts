@@ -8,6 +8,6 @@ const main = async (): Promise<void> => {
     } catch (error) {
         throw new Error(`Error starting the application: ${error}`);
     }
-}
+};
 
-main()
+main();

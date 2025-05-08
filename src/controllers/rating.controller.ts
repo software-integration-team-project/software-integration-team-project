@@ -12,7 +12,7 @@ const addRating = async (req: Request, res: Response): Promise<void> => {
     const movie_id = parseInt(movieId);
 
     if (isNaN(movie_id) || !rating) {
-        res.status(badRequest).json({ message: "Missing parameters" });
+        res.status(badRequest).json({ message: 'Missing parameters' });
     } else {
         try {
             const ratingObj = new ratingModel({
@@ -27,19 +27,19 @@ const addRating = async (req: Request, res: Response): Promise<void> => {
 
             const averageRating = ratings.reduce(
                 (acc, rating) => acc + rating.rating,
-                0
+                0,
             );
 
-            await pool.query("UPDATE movies SET rating = $1 WHERE movie_id = $2;", [
-                averageRating,
-                movie_id,
-            ]);
-            res.status(success).json({ message: "Rating added" });
+            await pool.query(
+                'UPDATE movies SET rating = $1 WHERE movie_id = $2;',
+                [averageRating, movie_id],
+            );
+            res.status(success).json({ message: 'Rating added' });
         } catch (error) {
             logger.error(error.stack);
-            res
-                .status(queryError)
-                .json({ error: "Exception occurred while adding rating" });
+            res.status(queryError).json({
+                error: 'Exception occurred while adding rating',
+            });
         }
     }
 };

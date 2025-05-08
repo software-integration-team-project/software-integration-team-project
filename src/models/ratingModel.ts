@@ -4,24 +4,24 @@ const ratingSchema = new mongoose.Schema(
     {
         movie_id: {
             type: Number,
-            required: [true, "movie is required"],
+            required: [true, 'movie is required'],
         },
         email: {
             type: String,
-            required: [true, "Email is required"],
+            required: [true, 'Email is required'],
         },
         rating: {
             type: Number,
             min: 0,
             max: 5,
-            required: [true, "rating is required"],
+            required: [true, 'rating is required'],
         },
     },
     {
         timestamps: {
-            createdAt: "created_at",
+            createdAt: 'created_at',
         },
-    }
+    },
 );
 
-export default mongoose.model("Rating", ratingSchema);
+export default mongoose.model('Rating', ratingSchema);
