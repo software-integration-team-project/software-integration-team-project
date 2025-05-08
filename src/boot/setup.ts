@@ -20,10 +20,12 @@ import ratingRoutes from '../routes/rating.routes';
 import usersRoutes from '../routes/users.routes';
 
 const PORT = process.env.PORT || 8080;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/epita';
+
 const app = express();
 
 try {
-    mongoose.connect('mongodb://localhost:27017/epita');
+    mongoose.connect(MONGO_URI);
     logger.info('MongoDB Connected');
 } catch (error) {
     logger.error('Error connecting to DB' + error);
