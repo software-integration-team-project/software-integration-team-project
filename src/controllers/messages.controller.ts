@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
-
 import messageModel from '../models/messageModel';
 
-const getMessages = async (req: Request, res: Response): Promise<Response> => {
+const getMessages = async (_req: Request, res: Response): Promise<Response> => {
     const messages = await messageModel.find({});
     return res.status(200).json(messages);
 };
