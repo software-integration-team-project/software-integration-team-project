@@ -10,6 +10,7 @@ import healthCheck from '../middleware/healthCheck';
 import notFound from '../middleware/notFound';
 import validator from '../middleware/validator';
 import logger from '../middleware/winston';
+
 // ROUTES
 import authRoutes from '../routes/auth.routes';
 import commentsRoutes from '../routes/comments.routes';
