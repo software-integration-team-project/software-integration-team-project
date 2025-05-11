@@ -4,12 +4,12 @@ import pool from '../boot/database/db_connect';
 import { queryError, success } from '../constants/statusCodes';
 import logger from '../middleware/winston';
 
-const getMovies = async (req: Request, res: Response): Promise<Response> => {
+const getMovies = async (req: Request, res: Response): Promise<void> => {
     const { category } = req.query;
 
     if (category) {
         const result = await getMoviesByCategory(category);
-        return res.status(success).json({ movies: result });
+        res.status(success).json({ movies: result });
     } else {
         try {
             const movies = await pool.query(
@@ -25,7 +25,7 @@ const getMovies = async (req: Request, res: Response): Promise<Response> => {
                 return acc;
             }, {});
 
-            return res.status(success).json({ movies: groupedMovies });
+            res.status(success).json({ movies: groupedMovies });
         } catch (error) {
             logger.error(error.stack);
             res.status(queryError).json({
@@ -47,10 +47,7 @@ const getMoviesByCategory = async (category: unknown): Promise<unknown> => {
     }
 };
 
-const getTopRatedMovies = async (
-    req: Request,
-    res: Response,
-): Promise<void> => {
+const getTopRatedMovies = async (_: Request, res: Response): Promise<void> => {
     try {
         const movies = await pool.query(
             'SELECT * FROM movies ORDER BY rating DESC LIMIT 10;',

@@ -4,6 +4,15 @@ import jwt from 'jsonwebtoken';
 import { unauthorized } from '../constants/statusCodes';
 import logger from './winston';
 
+import type { UserType } from '../types/User';
+
+// Add this type extension
+declare module 'express-session' {
+    interface SessionData {
+        user: UserType;
+    }
+}
+
 const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
     const token = req.header('Authorization');
 

@@ -54,12 +54,12 @@ const editPassword = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const logout = async (req: Request, res: Response): Promise<Response> => {
+const logout = async (req: Request, res: Response): Promise<void> => {
     if (req.session.user) {
         delete req.session.user;
     }
 
-    return res.status(200).json({ message: 'Disconnected' });
+    res.status(200).json({ message: 'Disconnected' });
 };
 
 export default {

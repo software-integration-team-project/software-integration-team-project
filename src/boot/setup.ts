@@ -10,7 +10,6 @@ import healthCheck from '../middleware/healthCheck';
 import notFound from '../middleware/notFound';
 import validator from '../middleware/validator';
 import logger from '../middleware/winston';
-
 // ROUTES
 import authRoutes from '../routes/auth.routes';
 import commentsRoutes from '../routes/comments.routes';
@@ -48,7 +47,15 @@ const registerCoreMiddleWare = (): void => {
             }),
         );
 
-        app.use(morgan('combined', { stream: logger.stream }));
+        app.use(
+            morgan('combined', {
+                stream: {
+                    write: (message: string) => {
+                        logger.stream(message.trim());
+                    },
+                },
+            }),
+        );
         app.use(express.json()); // returning middleware that only parses Json
         app.use(cors({})); // enabling CORS
         app.use(helmet()); // enabling helmet -> setting response headers
