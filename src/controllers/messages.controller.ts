@@ -2,34 +2,33 @@ import { Request, Response } from 'express';
 
 import messageModel from '../models/messageModel';
 
-const getMessages = async (req: Request, res: Response): Promise<Response> => {
+const getMessages = async (_: Request, res: Response): Promise<void> => {
     const messages = await messageModel.find({});
-    return res.status(200).json(messages);
+    res.status(200).json(messages);
 };
 
-const getMessageById = async (
-    req: Request,
-    res: Response,
-): Promise<Response> => {
+const getMessageById = async (req: Request, res: Response): Promise<void> => {
     const { messageId } = req.params;
 
     try {
         const message = await messageModel.findById(messageId);
-        return res.status(200).json(message);
+        res.status(200).json(message);
     } catch {
-        return res.status(500).json({ error: 'Error while getting message' });
+        res.status(500).json({ error: 'Error while getting message' });
     }
 };
 
-const addMessage = async (req: Request, res: Response): Promise<Response> => {
+const addMessage = async (req: Request, res: Response): Promise<void> => {
     const { message } = req.body;
 
     if (!message || !message.name) {
-        return res.status(400).json({ error: 'missing information' });
+        res.status(400).json({ error: 'missing information' });
+        return;
     }
 
     if (!req.session.user) {
-        return res.status(500).json({ error: 'You are not authenticated' });
+        res.status(500).json({ error: 'You are not authenticated' });
+        return;
     }
 
     message.user = req.session.user._id;
@@ -37,18 +36,21 @@ const addMessage = async (req: Request, res: Response): Promise<Response> => {
     try {
         const messageObj = new messageModel(message);
         await messageObj.save();
-        return res.status(200).json(messageObj);
+        res.status(200).json(messageObj);
     } catch {
-        return res.status(500).json({ error: 'Failed to add message' });
+        res.status(500).json({ error: 'Failed to add message' });
     }
 };
 
-const editMessage = async (req: Request, res: Response): Promise<Response> => {
+const editMessage = async (req: Request, res: Response): Promise<void> => {
     const { name } = req.body;
     const { messageId } = req.params;
 
-    if (!name || !messageId)
-        return res.status(400).json({ error: 'missing information' });
+    if (!name || !messageId) {
+        res.status(400).json({ error: 'missing information' });
+        return;
+    }
+
     try {
         const message = await messageModel.findByIdAndUpdate(
             messageId,
@@ -59,26 +61,23 @@ const editMessage = async (req: Request, res: Response): Promise<Response> => {
                 new: true,
             },
         );
-        return res.status(200).json(message);
+
+        res.status(200).json(message);
     } catch {
-        return res.status(500).json({ error: 'Failed to update message' });
+        res.status(500).json({ error: 'Failed to update message' });
     }
 };
 
-const deleteMessage = async (
-    req: Request,
-    res: Response,
-): Promise<Response> => {
+const deleteMessage = async (req: Request, res: Response): Promise<void> => {
     const { messageId } = req.params;
 
-    if (!messageId)
-        return res.status(400).json({ error: 'missing information' });
+    if (!messageId) res.status(400).json({ error: 'missing information' });
 
     try {
         await messageModel.findByIdAndDelete(messageId);
-        return res.status(200).json({ message: 'Message deleted' });
+        res.status(200).json({ message: 'Message deleted' });
     } catch {
-        return res.status(500).json({ error: 'Failed to delete message' });
+        res.status(500).json({ error: 'Failed to delete message' });
     }
 };
 
