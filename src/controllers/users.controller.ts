@@ -11,7 +11,7 @@ import {
 } from '../constants/statusCodes';
 import logger from '../middleware/winston';
 
-const register = async (req: Request, res: Response): Promise<Response> => {
+const register = async (req: Request, res: Response): Promise<void> => {
     const { email, username, password } = req.body;
     const { country, city, street } = req.body;
 
@@ -26,9 +26,9 @@ const register = async (req: Request, res: Response): Promise<Response> => {
                 [email],
             );
             if (result.rowCount) {
-                return res
-                    .status(userAlreadyExists)
-                    .json({ message: 'User already has an account' });
+                res.status(userAlreadyExists).json({
+                    message: 'User already has an account',
+                });
             } else {
                 await client.query('BEGIN');
                 const addedUser = await client.query(
@@ -78,7 +78,9 @@ const login = async (req: Request, res: Response): Promise<void> => {
                 } else {
                     if (rows.rows[0]) {
                         req.session.user = {
+                            _id: rows.rows[0]._id,
                             email: rows.rows[0].email,
+                            username: rows.rows[0].username,
                         };
 
                         const token = jwt.sign(
