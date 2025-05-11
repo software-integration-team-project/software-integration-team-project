@@ -1,5 +1,7 @@
-declare namespace Express {
-    export interface Request {
-        session: Session & Partial<SessionData> & UserType;
+/* import { UserType } from './User';
+
+declare module 'express-session' {
+    interface SessionData {
+        user: UserType;
     }
-}
+} */
