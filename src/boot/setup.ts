@@ -47,7 +47,15 @@ const registerCoreMiddleWare = (): void => {
             }),
         );
 
-        app.use(morgan('combined', { stream: logger.stream }));
+        app.use(
+            morgan('combined', {
+                stream: {
+                    write: (message: string) => {
+                        logger.stream(message.trim());
+                    },
+                },
+            }),
+        );
         app.use(express.json()); // returning middleware that only parses Json
         app.use(cors({})); // enabling CORS
         app.use(helmet()); // enabling helmet -> setting response headers
