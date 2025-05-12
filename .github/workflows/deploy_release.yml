@@ -3,7 +3,7 @@ name: Release and Deploy
 on:
   push:
     branches:
-      - release  
+      - ci/add-release-deployment  
 
 jobs:
   lint-test-build-deploy:
