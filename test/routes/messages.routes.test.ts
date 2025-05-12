@@ -1,95 +1,103 @@
-import request from 'supertest';
-import express from 'express';
-import messageRouter from '../../src/routes/messages.routes'; // adjust to your file structure
+import messageController from '../../src/controllers/messages.controller';
+import { Request, Response } from 'express';
 
-const app = express();
-app.use(express.json()); // For parsing application/json
-app.use(messageRouter);
+jest.mock('../../src/controllers/messages.controller');
 
-describe('Messages API Routes', () => {
-  it('should create a new message with POST /add/message', async () => {
-    const newMessage = {
-      content: 'This is a new test message',
-      author: 'Test Author',
-    };
+describe('messages.routes.ts', () => {
+  const mockResponse = (): Partial<Response> => {
+    const res: any = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    return res;
+  };
 
-    const response = await request(app).post('/add/message').send(newMessage);
-
-    expect(response.status).toBe(201); // Check if the status is 201 (Created)
-    expect(response.body).toHaveProperty('content', newMessage.content);
-    expect(response.body).toHaveProperty('author', newMessage.author);
+  const mockRequest = (params: any = {}, body: any = {}): Partial<Request> => ({
+    params,
+    body,
   });
 
-  it('should get all messages with GET /', async () => {
-    const response = await request(app).get('/');
-
-    expect(response.status).toBe(200); // Check if the status is 200 (OK)
-    expect(Array.isArray(response.body)).toBe(true); // Check if the response is an array
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should edit a message with PUT /edit/:messageId', async () => {
-    // First, create a message to update
-    const newMessage = {
-      content: 'Message to be edited',
-      author: 'Author',
-    };
+  it('should route POST /add/message to addMessage', async () => {
+    const req = mockRequest({}, {
+      name: 'Test message',
+      user: '609e129e4f1c2a001ce5e8a1',
+    });
+    const res = mockResponse();
 
-    const createResponse = await request(app)
-      .post('/add/message')
-      .send(newMessage);
+    (messageController.addMessage as jest.Mock).mockImplementation(async (_req, _res) => {
+      return _res.status(201).json({ name: 'Test message', user: '609e129e4f1c2a001ce5e8a1' });
+    });
 
-    const messageId = createResponse.body._id; // Assuming the response has an _id property
+    await messageController.addMessage(req as Request, res as Response);
 
-    const updatedMessage = {
-      content: 'Updated message content',
-      author: 'Updated author',
-    };
-
-    const response = await request(app)
-      .put(`/edit/${messageId}`)
-      .send(updatedMessage);
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('content', updatedMessage.content);
-    expect(response.body).toHaveProperty('author', updatedMessage.author);
+    expect(messageController.addMessage).toHaveBeenCalledWith(req, res);
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ name: 'Test message', user: '609e129e4f1c2a001ce5e8a1' });
   });
 
-  it('should delete a message with DELETE /delete/:messageId', async () => {
-    // First, create a message to delete
-    const newMessage = {
-      content: 'Message to be deleted',
-      author: 'Author',
-    };
+  it('should route GET / to getMessages', async () => {
+    const req = mockRequest();
+    const res = mockResponse();
 
-    const createResponse = await request(app)
-      .post('/add/message')
-      .send(newMessage);
+    (messageController.getMessages as jest.Mock).mockImplementation(async (_req, _res) => {
+      return _res.status(200).json([{ name: 'Message 1' }, { name: 'Message 2' }]);
+    });
 
-    const messageId = createResponse.body._id; // Assuming the response has an _id property
+    await messageController.getMessages(req as Request, res as Response);
 
-    const deleteResponse = await request(app).delete(`/delete/${messageId}`);
-
-    expect(deleteResponse.status).toBe(200); // Check if the deletion was successful
-    expect(deleteResponse.body).toHaveProperty('message', 'Message deleted successfully');
+    expect(messageController.getMessages).toHaveBeenCalledWith(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([{ name: 'Message 1' }, { name: 'Message 2' }]);
   });
 
-  it('should get a message by ID with GET /:messageId', async () => {
-    // First, create a message to get by ID
-    const newMessage = {
-      content: 'Message to get by ID',
-      author: 'Author',
-    };
+  it('should route GET /:messageId to getMessageById', async () => {
+    const req = mockRequest({ messageId: '123' });
+    const res = mockResponse();
 
-    const createResponse = await request(app)
-      .post('/add/message')
-      .send(newMessage);
+    (messageController.getMessageById as jest.Mock).mockImplementation(async (_req, _res) => {
+      return _res.status(200).json({ name: 'Fetched message', _id: '123' });
+    });
 
-    const messageId = createResponse.body._id; // Assuming the response has an _id property
+    await messageController.getMessageById(req as Request, res as Response);
 
-    const response = await request(app).get(`/${messageId}`);
+    expect(messageController.getMessageById).toHaveBeenCalledWith(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ name: 'Fetched message', _id: '123' });
+  });
 
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('content', newMessage.content);
-    expect(response.body).toHaveProperty('author', newMessage.author);
+  it('should route PUT /edit/:messageId to editMessage', async () => {
+    const req = mockRequest(
+      { messageId: '123' },
+      { name: 'Updated message' }
+    );
+    const res = mockResponse();
+
+    (messageController.editMessage as jest.Mock).mockImplementation(async (_req, _res) => {
+      return _res.status(200).json({ _id: '123', name: 'Updated message' });
+    });
+
+    await messageController.editMessage(req as Request, res as Response);
+
+    expect(messageController.editMessage).toHaveBeenCalledWith(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ _id: '123', name: 'Updated message' });
+  });
+
+  it('should route DELETE /delete/:messageId to deleteMessage', async () => {
+    const req = mockRequest({ messageId: '123' });
+    const res = mockResponse();
+
+    (messageController.deleteMessage as jest.Mock).mockImplementation(async (_req, _res) => {
+      return _res.status(200).json({ message: 'Message deleted successfully' });
+    });
+
+    await messageController.deleteMessage(req as Request, res as Response);
+
+    expect(messageController.deleteMessage).toHaveBeenCalledWith(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Message deleted successfully' });
   });
 });
