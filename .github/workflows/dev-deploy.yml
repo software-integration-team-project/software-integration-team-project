@@ -1,0 +1,34 @@
+name: Deploy Dev Environment to EC2
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    name: Deploy to EC2 Dev Instance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Deploy via SSH to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_DEV_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_DEV_KEY }}
+          script: |
+            cd ~/software-integration-team-project
+            git pull origin dev
+            npm install
+            npm run build || true
+            pm2 restart dev-app || npm run start
+
