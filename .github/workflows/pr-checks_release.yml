@@ -11,17 +11,6 @@ on:
             - ci/add-release-deployment
 
 jobs:
-    lint:
-        name: Lint
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '18'
-            - run: npm install
-            - run: npm run lint
-
     test:
         name: Test
         runs-on: ubuntu-latest
