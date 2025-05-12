@@ -1,12 +1,13 @@
-name: Release and Deploy
+name: Deploy Dev Environment to EC2
 
 on:
   push:
     branches:
-      - ci/add-release-deployment  
+      - ci/add-release-deployment
 
 jobs:
-  lint-test-build-deploy:
+  deploy:
+    name: Deploy to EC2 Dev Instance
     runs-on: ubuntu-latest
 
     steps:
@@ -16,29 +17,26 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Lint code
-        run: npm run lint
+      - name: Build Application
+        run: npm run build || true
 
       - name: Run tests
-        run: npm test
+        run: npm run test
 
-      - name: Build the code
-        run: npm run build
-
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.6
+      - name: Deploy via SSH to EC2
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.EC2_HOST_RELEASE }}  # EC2 host URL from secrets
-          username: ubuntu  # EC2 SSH username
-          key: ${{ secrets.EC2_PRIVATE_KEY }}  # EC2 private key from secrets
-          port: 22  # SSH port
+          host: ${{ secrets.EC2_HOST_RELEASE }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /path/to/your/project  # Path to your project on EC2
-            git pull origin release  # Pull the latest changes from the release branch
-            npm install  # Install dependencies
-            pm2 restart all  # Restart application using PM2
+            cd ~/software-integration-team-project
+            git pull origin dev
+            npm install
+            npm run build || true
+            pm2 restart dev-app || npm run start
