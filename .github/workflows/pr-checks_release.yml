@@ -6,7 +6,7 @@ on:
       - release  
   push:
     branches:
-      - release  
+      - ci/add-release-deployment  
 
 jobs:
   lint-test-build-deploy:
