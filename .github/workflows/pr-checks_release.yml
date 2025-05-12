@@ -1,0 +1,47 @@
+name: Release and Deploy
+
+on:
+  pull_request:
+    branches:
+      - release  
+  push:
+    branches:
+      - release  
+
+jobs:
+  lint-test-build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build the code
+        run: npm run build
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST_RELEASE }}  
+          username: ubuntu  
+          key: ${{ secrets.EC2_PRIVATE_KEY }}  
+          port: 22  
+          script: |
+            cd /path/to/your/project  # Path to your project on EC2
+            git pull origin release  # Pull the latest changes from the release branch
+            npm install  # Install dependencies
+            pm2 restart all  # Restart application using PM2
