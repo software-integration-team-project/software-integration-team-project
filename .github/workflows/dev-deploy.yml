@@ -26,9 +26,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_DEV_KEY }}
           script: |
+            echo "Starting deployment"
             cd ~/software-integration-team-project
             git pull origin dev
+            echo "Git pull completed"
             npm install
+            echo "NPM install completed"
             npm run build || true
+            echo "Build completed"
+            pm2 status
             pm2 restart dev-app || npm run start
+            echo "App restarted"
+
 
