@@ -1,5 +1,0 @@
-{"level":"error","message":"jwt malformed","name":"JsonWebTokenError","timestamp":"2025-05-08T16:20:30.309Z"}
-{"level":"error","message":"jwt malformed","name":"JsonWebTokenError","timestamp":"2025-05-08T16:25:44.335Z"}
-{"level":"info","message":"MongoDB Connected","timestamp":"2025-05-11T11:05:48.252Z"}
-{"level":"info","message":"Listening on 127.0.0.1:8080","timestamp":"2025-05-11T11:05:48.260Z"}
-{"level":"error","message":"PostgreSQL Connection Failed","timestamp":"2025-05-11T11:05:48.267Z"}

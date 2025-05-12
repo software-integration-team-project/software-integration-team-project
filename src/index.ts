@@ -1,4 +1,7 @@
 import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.dev' });
+dotenv.config({ path: '.env.release' });
 
 import { startApp } from './boot/setup';
 
