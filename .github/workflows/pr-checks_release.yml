@@ -1,59 +1,47 @@
-name: PR Workflow
+name: PR Check
 
 on:
-  pull_request:
-    branches:
-      - dev
-      - main
-      - prod
-      - pprod
-      - release
-      - ci/add-release-deployment
+    pull_request:
+        branches:
+            - dev
+            - main
+            - prod
+            - pprod
+            - release
+            - ci/add-release-deployment
 
 jobs:
-  lint:
-    name: Run Linting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Run ESLint
-        run: npm run lint
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+            - run: npm install
+            - run: npm run lint
 
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm run test
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        needs: lint
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+            - run: npm install
+            - run: npm run test
 
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Build the application
-        run: npm run build
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        needs: test
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+            - run: npm install
+            - run: npm run build
